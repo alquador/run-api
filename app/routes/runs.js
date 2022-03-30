@@ -51,7 +51,7 @@ router.get('/runs/:id', (req, res, next) => {
 	Run.findById(req.params.id)
 		.then(handle404)
 		// if `findById` is succesful, respond with 200 and "example" JSON
-		.then((example) => res.status(200).json({ run: run.toObject() }))
+		.then((run) => res.status(200).json({ run: run.toObject() }))
 		// if an error occurs, pass it to the handler
 		.catch(next)
 })
@@ -81,20 +81,20 @@ router.post('/runs', (req, res, next) => {
 
 // UPDATE
 // PATCH /examples/5a7db6c74d55bc51bdf39793
-router.patch('/runs/:id', removeBlanks, (req, res, next) => {
+router.patch('/runs/:id', (req, res, next) => {
 	// if the client attempts to change the `owner` property by including a new
 	// owner, prevent that by deleting that key/value pair
-	delete req.body.run.owner
-
-	Example.findById(req.params.id)
+	//delete req.body.run.owner
+		//added req.body
+		Run.findById(req.params.id, req.body)
 		.then(handle404)
-		.then((example) => {
+		.then((run) => {
 			// pass the `req` object and the Mongoose record to `requireOwnership`
 			// it will throw an error if the current user isn't the owner
-			requireOwnership(req, example)
+			// requireOwnership(req, run)
 
 			// pass the result of Mongoose's `.update` to the next `.then`
-			return example.updateOne(req.body.example)
+			return run.updateOne(req.body)
 		})
 		// if that succeeded, return 204 and no JSON
 		.then(() => res.sendStatus(204))
@@ -104,14 +104,14 @@ router.patch('/runs/:id', removeBlanks, (req, res, next) => {
 
 // DESTROY
 // DELETE /examples/5a7db6c74d55bc51bdf39793
-router.delete('/examples/:id', (req, res, next) => {
-	Example.findById(req.params.id)
+router.delete('/runs/:id', (req, res, next) => {
+	Run.findById(req.params.id)
 		.then(handle404)
-		.then((example) => {
+		.then((run) => {
 			// throw an error if current user doesn't own `example`
-			requireOwnership(req, example)
+			// requireOwnership(req, example)
 			// delete the example ONLY IF the above didn't throw
-			example.deleteOne()
+			run.deleteOne()
 		})
 		// send back 204 and no content if the deletion succeeded
 		.then(() => res.sendStatus(204))
