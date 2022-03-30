@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 
 // require route files
-const exampleRoutes = require('./app/routes/example_routes')
+const runRoutes = require('./app/routes/runs')
 const userRoutes = require('./app/routes/user_routes')
 
 // require middleware
@@ -38,7 +38,7 @@ const app = express()
 // `CLIENT_ORIGIN` is an environment variable that will be set on Heroku
 app.use(
 	cors({
-		origin: process.env.CLIENT_ORIGIN || `http://localhost:${clientDevPort}`,
+		origin: process.env.CLIENT_ORIGIN || `http://127.0.0.1:27017:${clientDevPort}`,
 	})
 )
 
@@ -65,7 +65,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(requestLogger)
 
 // register route files
-app.use(exampleRoutes)
+app.use(runRoutes)
 app.use(userRoutes)
 
 // register error handling middleware
