@@ -45,7 +45,7 @@ router.get('/runs', (req, res, next) => {
 })
 
 // SHOW
-// GET /examples/5a7db6c74d55bc51bdf39793
+// GET /runs/6253400fb9e5fc13530aa3a2
 router.get('/runs/:id', (req, res, next) => {
 	// req.params.id will be set based on the `:id` in the route
 	Run.findById(req.params.id)
@@ -58,25 +58,17 @@ router.get('/runs/:id', (req, res, next) => {
 
 // CREATE
 // POST /examples
-router.post('/runs', (req, res, next) => {
-	// set owner of new example to be current user
-	//req.body.run.owner = req.user.id
-	//console.log('this is the req.body.runId', req.body.runId)
-	Run.create({
-		description: req.body.description,
-		mileage: req.body.mileage,
-		date: req.body.date
-		//(req.body.run)
-		})
-		// respond to succesful `create` with status 201 and JSON of new "example"
-		.then((run) => {
-			res.status(201).json({ run: run.toObject() })
-		})
-		// if an error occurs, pass it off to our error handler
-		// the error handler needs the error message and the `res` object so that it
-		// can send an error message back to the client
-		.catch(next)
-		
+router.post('/runs', requireToken, (req, res, next) => {
+    // we brought in requireToken, so we can have access to req.user
+    req.body.run.owner = req.user.id
+
+    Run.create(req.body.run)
+        .then(run => {
+            // send a successful response like this
+            res.status(201).json({ run: run.toObject() })
+        })
+        // if an error occurs, pass it to the error handler
+        .catch(next)
 })
 
 // UPDATE

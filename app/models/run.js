@@ -4,15 +4,12 @@ const runSchema = new mongoose.Schema(
 	{
 		description: {
 			type: String,
-			required: true,
 		},
 		mileage: {
-			type: Number,
-			required: true,
+			type: Number
 		},
 		date: {
-			type: Date,
-			required: true,
+			type: Date
 		},
 	},
 	{
